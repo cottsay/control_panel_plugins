@@ -1,0 +1,57 @@
+<library path="lib/libcpbool">
+  <class type="control_panel::CPBoolPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Bool#std_msgs/Bool#Simple display widget for a boolean value
+    </description>
+  </class>
+</library>
+<library path="lib/libcpnumber">
+  <class type="control_panel::CPNumberPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Number#std_msgs/Byte,std_msgs/Int8,std_msgs/Int16,std_msgs/Int32,std_msgs/Int64,std_msgs/UInt8,std_msgs/UInt16,std_msgs/UInt32,std_msgs/UInt64,std_msgs/Float32,std_msgs/Float64#Simple display widget for any number value
+    </description>
+  </class>
+</library>
+<library path="lib/libcpposition">
+  <class type="control_panel::CPPositionPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Position#geometry_msgs/Point,geometry_msgs/PointStamped,geometry_msgs/Pose,geometry_msgs/PoseStamped,geometry_msgs/PoseWithCovariance,geometry_msgs/PoseWithCovarianceStamped,nav_msgs/Odometry#Simple display widget for any position message
+    </description>
+  </class>
+</library>
+<library path="lib/libcporientation">
+  <class type="control_panel::CPOrientationPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Orientation#geometry_msgs/Quaternion,geometry_msgs/QuaternionStamped,geometry_msgs/Pose,geometry_msgs/PoseStamped,geometry_msgs/PoseWithCovariance,geometry_msgs/PoseWithCovarianceStamped,nav_msgs/Odometry#Simple display widget for any oritentation message
+    </description>
+  </class>
+</library>
+<library path="lib/libcpvelocity">
+  <class type="control_panel::CPVelocityPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Velocity#geometry_msgs/Twist,geometry_msgs/TwistStamped,geometry_msgs/TwistWithCovariance,geometry_msgs/TwistWithCovarianceStamped,nav_msgs/Odometry#Simple display widget for any velocity message
+    </description>
+  </class>
+</library>
+<library path="lib/libcpkeydrive">
+  <class type="control_panel::CPKeyDrivePlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Key Drive#geometry_msgs/Twist#Creates Twist messages based on WASD keyboard controls
+    </description>
+  </class>
+</library>
+<library path="lib/libcpemptysrv">
+  <class type="control_panel::CPEmptySrvPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Empty Service#std_srvs/Empty#Simple button to call an empty service
+    </description>
+  </class>
+</library>
+<library path="lib/libcpjoy_to_twist">
+  <class type="control_panel::CPJoyToTwistPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Joy To Twist#std_msgs/Twist#Creates Twist messages based on a Joy message
+    </description>
+  </class>
+</library>
+
