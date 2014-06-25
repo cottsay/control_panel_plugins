@@ -22,6 +22,11 @@ namespace control_panel
 class CPEmptySrvNodelet : public nodelet::Nodelet
 {
 public:
+    CPEmptySrvNodelet( ) :
+        srvIsValid(false)
+    {
+    }
+
     void activate(const std::string topic, bool passive = false)
     {
         if(srv)
@@ -29,11 +34,13 @@ public:
             srv.shutdown();
             ros::NodeHandle nh = getNodeHandle();
             srv = nh.serviceClient<std_srvs::Empty>(topic);
+            srvIsValid = true;
         }
         else if(!passive)
         {
             ros::NodeHandle nh = getNodeHandle();
             srv = nh.serviceClient<std_srvs::Empty>(topic);
+            srvIsValid = true;
         }
     }
 
@@ -43,12 +50,13 @@ public:
 
     void deactivate()
     {
+        srvIsValid = false;
         srv.shutdown();
     }
 
     bool isActive()
     {
-        return (srv);
+        return (srvIsValid);
     }
 
     bool call( )
@@ -58,6 +66,7 @@ public:
     }
 
 private:
+    bool srvIsValid;
     ros::ServiceClient srv;
 };
 
