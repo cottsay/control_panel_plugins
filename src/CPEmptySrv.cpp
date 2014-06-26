@@ -19,6 +19,7 @@ CPEmptySrvPlugin::CPEmptySrvPlugin() :
 {
     ui->setupUi(this);
     ui->button->setEnabled(false);
+    ui->button->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->button->setText("CPEmptySrv");
     connect(ui->button, SIGNAL(clicked()), this, SLOT(call()));
 }
@@ -38,12 +39,14 @@ void CPEmptySrvPlugin::start()
     settings->setValue(uuid.toString() + "/Active", true);
     activateNodelet();
     ui->button->setEnabled(true);
+    ui->button->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 }
 
 void CPEmptySrvPlugin::stop()
 {
     settings->setValue(uuid.toString() + "/Active", false);
     ui->button->setEnabled(false);
+    ui->button->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     nodelet_priv->deactivate();
 }
 
