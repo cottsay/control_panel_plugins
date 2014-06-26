@@ -174,9 +174,12 @@ CPNumberPlugin::CPNumberPlugin() :
     nodelet_priv(new CPSSN())
 {
     ui->setupUi(this);
-    ui->label->setEnabled(false);
-    ui->value->setEnabled(false);
-    ui->label->setText("CPNumber: ");
+    connect(this, SIGNAL(changeValue(const QString &)), ui->value, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->value, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    emit changeEnabled(false);
+    emit changeLabel("CPNumber: ");
 }
 
 CPNumberPlugin::~CPNumberPlugin()
@@ -193,21 +196,19 @@ void CPNumberPlugin::start()
     }
     settings->setValue(uuid.toString() + "/Active", true);
     activateNodelet();
-    ui->label->setEnabled(true);
-    ui->value->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPNumberPlugin::stop()
 {
     settings->setValue(uuid.toString() + "/Active", false);
-    ui->label->setEnabled(false);
-    ui->value->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->deactivate();
 }
 
 void CPNumberPlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     ui->label->setVisible(settings->value(uuid.toString() + "/ShowLabel", true).toBool());
     ui->value->setAlignment((settings->value(uuid.toString() + "/ShowLabel", true).toBool() ? Qt::AlignLeft : Qt::AlignHCenter) | Qt::AlignVCenter);
     topic = settings->value(uuid.toString() + "/Topic", topic).toString();
@@ -232,13 +233,13 @@ void CPNumberPlugin::intRadixDisplay(long msg, int bits)
         str.sprintf("0x%.*X", (int)(bits/4.0+.8), msg);
     else if(messageFlags & MessageRadixChar)
         str.sprintf("%c", msg);
-    ui->value->setText(str);
+    emit changeValue(str);
 }
 
 void CPNumberPlugin::floatRadixDisplay(double msg)
 {
     if(messageFlags & MessageRadix10)
-        ui->value->setText(QString::number(msg));
+        emit changeValue(QString::number(msg));
 // un-comment when ubuntu is less bad, add int bits argument
 //    else if(messageFlags & MessageRadix16)
 //        ui->value->QString::sprintf("0x.*A", (int)(bits/4.0+.8), msg);
@@ -347,7 +348,7 @@ void CPNumberPlugin::configDialog()
 
     if (reactivate)
     {
-        ui->value->setText("N/A");
+        emit changeValue("N/A");
         activateNodelet(true);
     }
 
@@ -360,7 +361,7 @@ void CPNumberPlugin::configDialog()
 
     if(ui->label->text() != dialog->labeledit->text())
     {
-        ui->label->setText(dialog->labeledit->text());
+        emit changeLabel(dialog->labeledit->text());
         settings->setValue(uuid.toString() + "/Label", dialog->labeledit->text());
     }
 }

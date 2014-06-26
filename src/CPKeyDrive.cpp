@@ -26,8 +26,10 @@ CPKeyDrivePlugin::CPKeyDrivePlugin() :
     e(false)
 {
     ui->setupUi(this);
-    ui->label->setText("CP Key Drive");
-    ui->label->setEnabled(false);
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    emit changeLabel("CP Key Drive");
+    emit changeEnabled(false);
     pub_timer.setInterval(50);
     pub_timer.moveToThread(&pub_thread);
     connect(&pub_timer, SIGNAL(timeout()), this, SLOT(timerCB()));
@@ -53,12 +55,12 @@ void CPKeyDrivePlugin::start()
     nodelet_priv->activate(topic.toStdString());
     emit setKeyCB(this, true);
     pub_thread.start();
-    ui->label->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPKeyDrivePlugin::stop()
 {
-    ui->label->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->deactivate();
     pub_timer.stop();
     pub_thread.quit();
@@ -69,7 +71,7 @@ void CPKeyDrivePlugin::stop()
 
 void CPKeyDrivePlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     topic = settings->value(uuid.toString() + "/Topic", topic).toString();
     linear_x_velocity = settings->value(uuid.toString() + "/LinearXVelocity", linear_x_velocity).toDouble();
     linear_y_velocity = settings->value(uuid.toString() + "/LinearYVelocity", linear_y_velocity).toDouble();
@@ -244,7 +246,7 @@ void CPKeyDrivePlugin::configDialog()
 
     if(ui->label->text() != labeledit->text())
     {
-        ui->label->setText(labeledit->text());
+        emit changeLabel(labeledit->text());
         settings->setValue(uuid.toString() + "/Label", labeledit->text());
     }
 

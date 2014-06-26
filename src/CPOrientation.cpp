@@ -113,11 +113,16 @@ CPOrientationPlugin::CPOrientationPlugin() :
     nodelet_priv(new CPSSN())
 {
     ui->setupUi(this);
-    ui->label->setEnabled(false);
-    ui->xValue->setEnabled(false);
-    ui->yValue->setEnabled(false);
-    ui->zValue->setEnabled(false);
-    ui->label->setText("CP Orientation:");
+    connect(this, SIGNAL(changeX(const QString &)), ui->xValue, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeY(const QString &)), ui->yValue, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeZ(const QString &)), ui->zValue, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->xValue, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->yValue, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->zValue, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    emit changeEnabled(false);
+    emit changeLabel("CP Orientation:");
 }
 
 CPOrientationPlugin::~CPOrientationPlugin()
@@ -134,25 +139,19 @@ void CPOrientationPlugin::start()
     }
     settings->setValue(uuid.toString() + "/Active", true);
     activateNodelet();
-    ui->label->setEnabled(true);
-    ui->xValue->setEnabled(true);
-    ui->yValue->setEnabled(true);
-    ui->zValue->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPOrientationPlugin::stop()
 {
     settings->setValue(uuid.toString() + "/Active", false);
-    ui->label->setEnabled(false);
-    ui->xValue->setEnabled(false);
-    ui->yValue->setEnabled(false);
-    ui->zValue->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->deactivate();
 }
 
 void CPOrientationPlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     ui->label->setVisible(settings->value(uuid.toString() + "/ShowLabel", true).toBool());
     topic = settings->value(uuid.toString() + "/Topic", topic).toString();
     messageFlags = (enum MessageFlags)settings->value(uuid.toString() + "/Type", (int)messageFlags).toInt();
@@ -172,9 +171,9 @@ void CPOrientationPlugin::displayValues(double x, double y, double z, double w)
     double pitch = asin(-2.0 * (x*z - w*y)) * 57.2957795;
     double yaw = atan2(2.0 * (x*y + w*z), w*w + x*x - y*y - z*z) * 57.2957795;
 
-    ui->xValue->setText(QString::number(roll,'f', 4));
-    ui->yValue->setText(QString::number(pitch, 'f', 4));
-    ui->zValue->setText(QString::number(yaw, 'f', 4));
+    emit changeX(QString::number(roll,'f', 4));
+    emit changeY(QString::number(pitch, 'f', 4));
+    emit changeZ(QString::number(yaw, 'f', 4));
 }
 
 void CPOrientationPlugin::quaternionCB(const geometry_msgs::QuaternionConstPtr &msg)
@@ -265,9 +264,9 @@ void CPOrientationPlugin::configDialog()
 
     if (reactivate)
     {
-        ui->xValue->setText("N/A");
-        ui->yValue->setText("N/A");
-        ui->zValue->setText("N/A");
+        emit changeX("N/A");
+        emit changeY("N/A");
+        emit changeZ("N/A");
         activateNodelet(true);
     }
 
@@ -279,7 +278,7 @@ void CPOrientationPlugin::configDialog()
 
     if(ui->label->text() != dialog->labeledit->text())
     {
-        ui->label->setText(dialog->labeledit->text());
+        emit changeLabel(dialog->labeledit->text());
         settings->setValue(uuid.toString() + "/Label", dialog->labeledit->text());
     }
 }

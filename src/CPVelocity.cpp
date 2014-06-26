@@ -100,16 +100,24 @@ CPVelocityPlugin::CPVelocityPlugin() :
     nodelet_priv(new CPSSN())
 {
     ui->setupUi(this);
-    ui->label->setEnabled(false);
-    ui->linLabel->setEnabled(false);
-    ui->angLabel->setEnabled(false);
-    ui->xLinear->setEnabled(false);
-    ui->yLinear->setEnabled(false);
-    ui->zLinear->setEnabled(false);
-    ui->xAngular->setEnabled(false);
-    ui->yAngular->setEnabled(false);
-    ui->zAngular->setEnabled(false);
-    ui->label->setText("CPVelocity:");
+    connect(this, SIGNAL(changeLinearX(const QString &)), ui->xLinear, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLinearY(const QString &)), ui->yLinear, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLinearZ(const QString &)), ui->zLinear, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeAngularX(const QString &)), ui->xAngular, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeAngularY(const QString &)), ui->yAngular, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeAngularZ(const QString &)), ui->zAngular, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->xLinear, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->yLinear, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->zLinear, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->xAngular, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->yAngular, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->zAngular, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->linLabel, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->angLabel, SLOT(setEnabled(bool)));
+    emit changeEnabled(false);
+    emit changeLabel("CPVelocity:");
     ui->linLabel->setText("Linear:");
     ui->angLabel->setText("Angular:");
 }
@@ -128,35 +136,19 @@ void CPVelocityPlugin::start()
     }
     settings->setValue(uuid.toString() + "/Active", true);
     activateNodelet();
-    ui->label->setEnabled(true);
-    ui->linLabel->setEnabled(true);
-    ui->angLabel->setEnabled(true);
-    ui->xLinear->setEnabled(true);
-    ui->yLinear->setEnabled(true);
-    ui->zLinear->setEnabled(true);
-    ui->xAngular->setEnabled(true);
-    ui->yAngular->setEnabled(true);
-    ui->zAngular->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPVelocityPlugin::stop()
 {
     settings->setValue(uuid.toString() + "/Active", false);
-    ui->label->setEnabled(false);
-    ui->linLabel->setEnabled(false);
-    ui->angLabel->setEnabled(false);
-    ui->xLinear->setEnabled(false);
-    ui->yLinear->setEnabled(false);
-    ui->zLinear->setEnabled(false);
-    ui->xAngular->setEnabled(false);
-    ui->yAngular->setEnabled(false);
-    ui->zAngular->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->deactivate();
 }
 
 void CPVelocityPlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     ui->label->setVisible(settings->value(uuid.toString() + "/ShowLabel", true).toBool());
     topic = settings->value(uuid.toString() + "/Topic", topic).toString();
     messageFlags = (enum MessageFlags)settings->value(uuid.toString() + "/Type", (int)messageFlags).toInt();
@@ -171,13 +163,13 @@ boost::shared_ptr<nodelet::Nodelet> CPVelocityPlugin::getNodelet()
 
 void CPVelocityPlugin::displayValues(double xLin, double yLin, double zLin, double xAng, double yAng, double zAng)
 { 
-    ui->xLinear->setText(QString::number(xLin, 'f', 4));
-    ui->yLinear->setText(QString::number(yLin, 'f', 4));
-    ui->zLinear->setText(QString::number(zLin, 'f', 4));
+    emit changeLinearX(QString::number(xLin, 'f', 4));
+    emit changeLinearY(QString::number(yLin, 'f', 4));
+    emit changeLinearZ(QString::number(zLin, 'f', 4));
     
-    ui->xAngular->setText(QString::number(xAng, 'f', 4));
-    ui->yAngular->setText(QString::number(yAng, 'f', 4));
-    ui->zAngular->setText(QString::number(zAng, 'f', 4));
+    emit changeAngularX(QString::number(xAng, 'f', 4));
+    emit changeAngularY(QString::number(yAng, 'f', 4));
+    emit changeAngularZ(QString::number(zAng, 'f', 4));
 }
 
 void CPVelocityPlugin::twistCB(const geometry_msgs::TwistConstPtr &msg)
@@ -253,13 +245,13 @@ void CPVelocityPlugin::configDialog()
 
     if (reactivate)
     {
-        ui->xLinear->setText("N/A");
-        ui->yLinear->setText("N/A");
-        ui->zLinear->setText("N/A");
+        emit changeLinearX("N/A");
+        emit changeLinearY("N/A");
+        emit changeLinearZ("N/A");
 
-        ui->xAngular->setText("N/A");
-        ui->yAngular->setText("N/A");
-        ui->zAngular->setText("N/A");
+        emit changeAngularX("N/A");
+        emit changeAngularY("N/A");
+        emit changeAngularZ("N/A");
         activateNodelet(true);
     }
 
@@ -278,7 +270,7 @@ void CPVelocityPlugin::configDialog()
 
     if(ui->label->text() != dialog->labeledit->text())
     {
-        ui->label->setText(dialog->labeledit->text());
+        emit changeLabel(dialog->labeledit->text());
         settings->setValue(uuid.toString() + "/Label", dialog->labeledit->text());
     }
 }

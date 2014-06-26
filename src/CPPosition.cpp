@@ -103,11 +103,16 @@ CPPositionPlugin::CPPositionPlugin() :
     nodelet_priv(new CPSSN())
 {
     ui->setupUi(this);
-    ui->label->setEnabled(false);
-    ui->xValue->setEnabled(false);
-    ui->yValue->setEnabled(false);
-    ui->zValue->setEnabled(false);
-    ui->label->setText("CPPosition:");
+    connect(this, SIGNAL(changeX(const QString &)), ui->xValue, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeY(const QString &)), ui->yValue, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeZ(const QString &)), ui->zValue, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->xValue, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->yValue, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->zValue, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    emit changeEnabled(false);
+    emit changeLabel("CPPosition:");
 }
 
 CPPositionPlugin::~CPPositionPlugin()
@@ -124,25 +129,19 @@ void CPPositionPlugin::start()
     }
     settings->setValue(uuid.toString() + "/Active", true);
     activateNodelet();
-    ui->label->setEnabled(true);
-    ui->xValue->setEnabled(true);
-    ui->yValue->setEnabled(true);
-    ui->zValue->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPPositionPlugin::stop()
 {
     settings->setValue(uuid.toString() + "/Active", false);
-    ui->label->setEnabled(false);
-    ui->xValue->setEnabled(false);
-    ui->yValue->setEnabled(false);
-    ui->zValue->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->deactivate();
 }
 
 void CPPositionPlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     ui->label->setVisible(settings->value(uuid.toString() + "/ShowLabel", true).toBool());
     topic = settings->value(uuid.toString() + "/Topic", topic).toString();
     messageFlags = (enum MessageFlags)settings->value(uuid.toString() + "/Type", (int)messageFlags).toInt();
@@ -157,9 +156,9 @@ boost::shared_ptr<nodelet::Nodelet> CPPositionPlugin::getNodelet()
 
 void CPPositionPlugin::displayValues(double x, double y, double z)
 { 
-    ui->xValue->setText(QString::number(x, 'f', 4));
-    ui->yValue->setText(QString::number(y, 'f', 4));
-    ui->zValue->setText(QString::number(z, 'f', 4));
+    emit changeX(QString::number(x, 'f', 4));
+    emit changeY(QString::number(y, 'f', 4));
+    emit changeZ(QString::number(z, 'f', 4));
 }
 
 void CPPositionPlugin::pointCB(const geometry_msgs::PointConstPtr &msg)
@@ -245,9 +244,9 @@ void CPPositionPlugin::configDialog()
 
     if (reactivate)
     {
-        ui->xValue->setText("N/A");
-        ui->yValue->setText("N/A");
-        ui->zValue->setText("N/A");
+        emit changeX("N/A");
+        emit changeY("N/A");
+        emit changeZ("N/A");
         activateNodelet(true);
     }
 
@@ -259,7 +258,7 @@ void CPPositionPlugin::configDialog()
 
     if(ui->label->text() != dialog->labeledit->text())
     {
-        ui->label->setText(dialog->labeledit->text());
+        emit changeLabel(dialog->labeledit->text());
         settings->setValue(uuid.toString() + "/Label", dialog->labeledit->text());
     }
 }

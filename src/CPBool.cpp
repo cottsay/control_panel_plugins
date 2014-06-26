@@ -17,9 +17,12 @@ CPBoolPlugin::CPBoolPlugin() :
     nodelet_priv(new CPSSN())
 {
     ui->setupUi(this);
-    ui->label->setEnabled(false);
-    ui->value->setEnabled(false);
-    ui->label->setText("CPBool: ");
+    connect(this, SIGNAL(changeValue(const QString &)), ui->value, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->value, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    emit changeEnabled(false);
+    emit changeLabel("CPBool: ");
 }
 
 CPBoolPlugin::~CPBoolPlugin()
@@ -36,21 +39,19 @@ void CPBoolPlugin::start()
     }
     settings->setValue(uuid.toString() + "/Active", true);
     activateNodelet();
-    ui->label->setEnabled(true);
-    ui->value->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPBoolPlugin::stop()
 {
     settings->setValue(uuid.toString() + "/Active", false);
-    ui->label->setEnabled(false);
-    ui->value->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->deactivate();
 }
 
 void CPBoolPlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     ui->label->setVisible(settings->value(uuid.toString() + "/ShowLabel", true).toBool());
     ui->value->setAlignment((settings->value(uuid.toString() + "/ShowLabel", true).toBool() ? Qt::AlignLeft : Qt::AlignHCenter) | Qt::AlignVCenter);
     topic = settings->value(uuid.toString() + "/Topic", topic).toString();
@@ -65,7 +66,7 @@ boost::shared_ptr<nodelet::Nodelet> CPBoolPlugin::getNodelet()
 
 void CPBoolPlugin::boolCB(const std_msgs::BoolConstPtr &msg)
 {
-    ui->value->setText(msg->data ? "True" : "False");
+    emit changeValue(msg->data ? "True" : "False");
 }
 
 void CPBoolPlugin::setActive(bool active)
@@ -125,7 +126,7 @@ void CPBoolPlugin::configDialog()
 
     if(topic != topicedit->text())
     {
-        ui->value->setText("N/A");
+        emit changeValue("N/A");
         topic = topicedit->text();
         settings->setValue(uuid.toString() + "/Topic", topic);
         activateNodelet(true);
@@ -140,7 +141,7 @@ void CPBoolPlugin::configDialog()
 
     if(ui->label->text() != labeledit->text())
     {
-        ui->label->setText(labeledit->text());
+        emit changeValue(labeledit->text());
         settings->setValue(uuid.toString() + "/Label", labeledit->text());
     }
 }

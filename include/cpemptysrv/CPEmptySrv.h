@@ -87,6 +87,9 @@ public slots:
     void setActive(bool active);
     void call();
 
+signals:
+    void changeEnabled(bool);
+
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
     void activateNodelet(bool passive = false);  

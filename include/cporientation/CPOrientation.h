@@ -83,6 +83,13 @@ public slots:
     void configDialog();
     void setActive(bool active);
 
+signals:
+    void changeX(const QString &);
+    void changeY(const QString &);
+    void changeZ(const QString &);
+    void changeLabel(const QString &);
+    void changeEnabled(bool);
+
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
     void activateNodelet(bool passive = false);

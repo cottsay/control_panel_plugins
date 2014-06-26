@@ -17,8 +17,10 @@ CPJoyToTwistPlugin::CPJoyToTwistPlugin() :
     nodelet_priv(new joy_to_twist::joy_to_twist_nodelet(false))
 {
     ui->setupUi(this);
-    ui->label->setText("CP Joy To Twist");
-    ui->label->setEnabled(false);
+    connect(this, SIGNAL(changeLabel(const QString &)), ui->label, SLOT(setText(const QString &)));
+    connect(this, SIGNAL(changeEnabled(bool)), ui->label, SLOT(setEnabled(bool)));
+    emit changeLabel("CP Joy To Twist");
+    emit changeEnabled(false);
 }
 
 CPJoyToTwistPlugin::~CPJoyToTwistPlugin()
@@ -35,19 +37,19 @@ void CPJoyToTwistPlugin::start()
     }
     settings->setValue(uuid.toString() + "/Active", true);
     nodelet_priv->start();
-    ui->label->setEnabled(true);
+    emit changeEnabled(true);
 }
 
 void CPJoyToTwistPlugin::stop()
 {
-    ui->label->setEnabled(false);
+    emit changeEnabled(false);
     nodelet_priv->stop();
     settings->setValue(uuid.toString() + "/Active", false);
 }
 
 void CPJoyToTwistPlugin::setup()
 {
-    ui->label->setText(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
+    emit changeLabel(settings->value(uuid.toString() + "/Label", ui->label->text()).toString());
     linear_scale = settings->value(uuid.toString() + "/LinearScale", linear_scale).toFloat();
     nodelet_priv->set_linear_scale(linear_scale);
     angular_scale = settings->value(uuid.toString() + "/AngularScale", angular_scale).toFloat();
@@ -115,7 +117,7 @@ void CPJoyToTwistPlugin::configDialog()
 
     if(ui->label->text() != labeledit->text())
     {
-        ui->label->setText(labeledit->text());
+        emit changeLabel(labeledit->text());
         settings->setValue(uuid.toString() + "/Label", labeledit->text());
     }
 
