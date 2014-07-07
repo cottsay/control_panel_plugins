@@ -100,7 +100,13 @@ void CPEmptySrvPlugin::configDialog()
 {
     bool reactivateNodelet = false;
     CPEmptySrvCfg dialog(topic, ui->button->text(), joyEn, joyTopic, joyIdx);
+
+    // Invalidate the joyIdx to keep from calling while detecting
+    joyIdx = -1;
+
     connect(this, SIGNAL(joyDetect(int)), &dialog, SLOT(joyDetect(int)));
+    connect(&dialog.joyidxbutton, SIGNAL(toggled(bool)), this, SLOT(setJoyEn(bool)));
+    connect(&dialog, SIGNAL(updateJoyTopic(const QString &)), this, SLOT(setJoyTopic(const QString &)));
 
     if(!dialog.exec())
         return;
@@ -151,7 +157,7 @@ void CPEmptySrvPlugin::JoyCB(const sensor_msgs::Joy::ConstPtr &msg)
 {
     static bool lastState = false;
 
-    if(msg->buttons.size() > joyIdx)
+    if(0 <= joyIdx && msg->buttons.size() > joyIdx)
     {
         if(msg->buttons[joyIdx] && !lastState)
             emit pressButton();
@@ -167,6 +173,23 @@ void CPEmptySrvPlugin::JoyCB(const sensor_msgs::Joy::ConstPtr &msg)
                 break;
             }
     }
+}
+
+void CPEmptySrvPlugin::setJoyTopic(const QString &topic)
+{
+    if(joyTopic != topic)
+    {
+        joyTopic = topic;
+        settings->setValue(uuid.toString() + "/JoyTopic", joyTopic);
+    }
+
+    if(joyEn != true)
+    {
+        joyEn = true;
+        settings->setValue(uuid.toString() + "/JoyEnabled", joyEn);
+    }
+
+    activateNodelet(true);
 }
 
 CPEmptySrvCfg::CPEmptySrvCfg(const QString &topic, const QString &label, const bool joyEn, const QString &joyTopic, unsigned int joyIdx) :
@@ -234,6 +257,7 @@ void CPEmptySrvCfg::joyAuto()
     else
     {
         joyidxbutton.setText(tr("Listening..."));
+        emit updateJoyTopic(joytopicedit.text());
     }
     detecting = !detecting;
 }

@@ -111,6 +111,8 @@ public slots:
     void setActive(bool active);
     void call();
     void JoyCB(const sensor_msgs::Joy::ConstPtr &msg);
+    void setJoyEn(const bool en);
+    void setJoyTopic(const QString &topic);
 
 signals:
     void changeEnabled(bool);
@@ -126,7 +128,7 @@ private:
     QString topic;
     bool joyEn;
     QString joyTopic;
-    unsigned int joyIdx;
+    int joyIdx;
     CPEmptySrvNodelet *nodelet_priv;
 
 };
@@ -158,6 +160,9 @@ public:
     QPushButton joyidxbutton;
 
     QPushButton okbutton;
+
+signals:
+    void updateJoyTopic(const QString &topic);
 
 public slots:
     void joyChange(bool en);
