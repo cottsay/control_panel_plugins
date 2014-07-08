@@ -141,7 +141,7 @@ void CPBoolPlugin::configDialog()
 
     if(ui->label->text() != labeledit->text())
     {
-        emit changeValue(labeledit->text());
+        emit changeLabel(labeledit->text());
         settings->setValue(uuid.toString() + "/Label", labeledit->text());
     }
 }
