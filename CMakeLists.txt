@@ -112,6 +112,12 @@ QT4_WRAP_UI(QT_CPJOY_TO_TWIST_UI_H
 QT4_WRAP_CPP(QT_CPJOY_TO_TWIST_MOC_H
   include/cpjoy_to_twist/CPJoyToTwist.h
 )
+QT4_WRAP_UI(QT_CPRANGE_UI_H
+  ui/CPRange.ui
+)
+QT4_WRAP_CPP(QT_CPRANGE_MOC_H
+  include/cprange/CPRange.h
+)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 ## Declare a cpp library
@@ -155,6 +161,11 @@ add_library(cpjoy_to_twist
   ${QT_CPJOY_TO_TWIST_MOC_H}
   ${QT_CPJOY_TO_TWIST_UI_H}
 )
+add_library(cprange
+  src/CPRange.cpp
+  ${QT_CPRANGE_MOC_H}
+  ${QT_CPRANGE_UI_H}
+)
 
 ## Declare a cpp executable
 # add_executable(control_panel_plugins_node src/control_panel_plugins_node.cpp)
@@ -196,6 +207,10 @@ target_link_libraries(cpjoy_to_twist
   ${catkin_LIBRARIES}
   ${QT_LIBRARIES}
 )
+target_link_libraries(cprange
+  ${catkin_LIBRARIES}
+  ${QT_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -212,7 +227,7 @@ target_link_libraries(cpjoy_to_twist
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS cpbool cpnumber cpposition cporientation cpvelocity cpkeydrive cpemptysrv cpjoy_to_twist
+install(TARGETS cpbool cpnumber cpposition cporientation cpvelocity cpkeydrive cpemptysrv cpjoy_to_twist cprange
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
