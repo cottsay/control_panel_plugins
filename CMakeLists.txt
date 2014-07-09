@@ -4,10 +4,13 @@ project(control_panel_plugins)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS control_panel roscpp std_msgs std_srvs joy_to_twist)
+find_package(catkin REQUIRED COMPONENTS control_panel roscpp std_msgs std_srvs joy_to_twist sensor_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui)
+set(QT_LIBRARIES_NO_GL ${QT_LIBRARIES})
+find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui QtOpenGL)
+find_package(OpenGL REQUIRED)
 include(${QT_USE_FILE})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -62,6 +65,8 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${QT_INCLUDE_DIRS}
+  ${OPENGL_INCLUDE_DIRS}
 )
 
 QT4_WRAP_UI(QT_CPBOOL_UI_H
@@ -118,6 +123,12 @@ QT4_WRAP_UI(QT_CPRANGE_UI_H
 QT4_WRAP_CPP(QT_CPRANGE_MOC_H
   include/cprange/CPRange.h
 )
+QT4_WRAP_UI(QT_CPIMAGE_UI_H
+  ui/CPImage.ui
+)
+QT4_WRAP_CPP(QT_CPIMAGE_MOC_H
+  include/cpimage/CPImage.h
+)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 ## Declare a cpp library
@@ -166,6 +177,11 @@ add_library(cprange
   ${QT_CPRANGE_MOC_H}
   ${QT_CPRANGE_UI_H}
 )
+add_library(cpimage
+  src/CPImage.cpp
+  ${QT_CPIMAGE_MOC_H}
+  ${QT_CPIMAGE_UI_H}
+)
 
 ## Declare a cpp executable
 # add_executable(control_panel_plugins_node src/control_panel_plugins_node.cpp)
@@ -177,39 +193,44 @@ add_library(cprange
 ## Specify libraries to link a library or executable target against
 target_link_libraries(cpbool
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cpnumber
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cpposition
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cporientation
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cpvelocity
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cpkeydrive
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cpemptysrv
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cpjoy_to_twist
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
 )
 target_link_libraries(cprange
   ${catkin_LIBRARIES}
+  ${QT_LIBRARIES_NO_GL}
+)
+target_link_libraries(cpimage
+  ${catkin_LIBRARIES}
   ${QT_LIBRARIES}
+  ${OPENGL_LIBRARIES}
 )
 
 #############
@@ -227,7 +248,7 @@ target_link_libraries(cprange
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS cpbool cpnumber cpposition cporientation cpvelocity cpkeydrive cpemptysrv cpjoy_to_twist cprange
+install(TARGETS cpbool cpnumber cpposition cporientation cpvelocity cpkeydrive cpemptysrv cpjoy_to_twist cprange cpimage
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

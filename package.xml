@@ -20,6 +20,7 @@
   <build_depend>std_srvs</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>joy_to_twist</build_depend>
+  <build_depend>sensor_msgs</build_depend>
   <run_depend>libqt4</run_depend>
   <run_depend>pluginlib</run_depend>
   <run_depend>control_panel</run_depend>
@@ -27,6 +28,7 @@
   <run_depend>std_srvs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>joy_to_twist</run_depend>
+  <run_depend>sensor_msgs</run_depend>
 
   <export>
     <control_panel plugin="${prefix}/control_panel_plugins.xml" />

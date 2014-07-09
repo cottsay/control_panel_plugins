@@ -61,4 +61,11 @@
     </description>
   </class>
 </library>
+<library path="lib/libcpimage">
+  <class type="control_panel::CPImagePlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Image#sensor_msgs/Image#Simple display widget for an image feed
+    </description>
+  </class>
+</library>
 
