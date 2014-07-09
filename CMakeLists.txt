@@ -129,6 +129,15 @@ QT4_WRAP_UI(QT_CPIMAGE_UI_H
 QT4_WRAP_CPP(QT_CPIMAGE_MOC_H
   include/cpimage/CPImage.h
 )
+QT4_WRAP_UI(QT_CPATTITUDE_UI_H
+  ui/CPAttitude.ui
+)
+QT4_WRAP_CPP(QT_CPATTITUDE_MOC_H
+  include/cpattitude/CPAttitude.h
+)
+QT4_ADD_RESOURCES(QT_CPATTITUDE_RES
+  resources/CPAttitude.qrc
+)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 ## Declare a cpp library
@@ -182,6 +191,12 @@ add_library(cpimage
   ${QT_CPIMAGE_MOC_H}
   ${QT_CPIMAGE_UI_H}
 )
+add_library(cpattitude
+  src/CPAttitude.cpp
+  ${QT_CPATTITUDE_MOC_H}
+  ${QT_CPATTITUDE_UI_H}
+  ${QT_CPATTITUDE_RES}
+)
 
 ## Declare a cpp executable
 # add_executable(control_panel_plugins_node src/control_panel_plugins_node.cpp)
@@ -232,6 +247,11 @@ target_link_libraries(cpimage
   ${QT_LIBRARIES}
   ${OPENGL_LIBRARIES}
 )
+target_link_libraries(cpattitude
+  ${catkin_LIBRARIES}
+  ${QT_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -248,7 +268,7 @@ target_link_libraries(cpimage
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS cpbool cpnumber cpposition cporientation cpvelocity cpkeydrive cpemptysrv cpjoy_to_twist cprange cpimage
+install(TARGETS cpbool cpnumber cpposition cporientation cpvelocity cpkeydrive cpemptysrv cpjoy_to_twist cprange cpimage cpattitude
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

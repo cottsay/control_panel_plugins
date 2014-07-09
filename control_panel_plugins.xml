@@ -68,4 +68,11 @@
     </description>
   </class>
 </library>
+<library path="lib/libcpattitude">
+  <class type="control_panel::CPAttitudePlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Attitude#sensor_msgs/Imu#Simple display widget for IMU orientation
+    </description>
+  </class>
+</library>
 
