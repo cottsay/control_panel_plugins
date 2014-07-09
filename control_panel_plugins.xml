@@ -54,7 +54,7 @@
     </description>
   </class>
 </library>
-<library path="lib/librange">
+<library path="lib/libcprange">
   <class type="control_panel::CPRangePlugin" base_class_type="control_panel::ControlPanelPlugin">
     <description>
       Range#sensor_msgs/Range#Simple display widget for a range message
