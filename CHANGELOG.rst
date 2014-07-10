@@ -2,8 +2,8 @@
 Changelog for package control_panel_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.0 (2014-07-10)
+------------------
 * Use global GLWidget instance
 * Require control_panel with global GLWidget functionality
 * CPAttitude: Initial plugin
