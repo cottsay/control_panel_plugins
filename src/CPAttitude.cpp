@@ -141,7 +141,7 @@ void CPAttitudePlugin::activateNodelet(bool passive)
 }
 
 CPAttitudeGL::CPAttitudeGL(QWidget *_parent)
-    : parent(_parent),
+    : QGLWidget(_parent, &(ControlPanelPlugin::getGlobalGLWidget())),
       zoom_level(1.0),
       w(100),
       h(100),
@@ -296,6 +296,7 @@ void CPAttitudeGL::updateZoom()
 {
     const double w_2 = w / 2.0 * zoom_level;
     const double h_2 = h / 2.0 * zoom_level;
+    makeCurrent();
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

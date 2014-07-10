@@ -168,7 +168,7 @@ QImage CPImagePlugin::rosImageToQt(const sensor_msgs::Image::ConstPtr &msg)
 }
 
 CPImageGL::CPImageGL(QWidget *_parent)
-    : parent(_parent),
+    : QGLWidget(_parent, &(ControlPanelPlugin::getGlobalGLWidget())),
       zoom_level(1.0),
       w(100),
       h(100),
@@ -251,6 +251,7 @@ void CPImageGL::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+    glBindTexture(GL_TEXTURE_2D, tex_id);
     glCallList(image_dl);
 }
 
@@ -337,6 +338,7 @@ void CPImageGL::updateZoom()
 {
     const double w_2 = w / 2.0 * zoom_level;
     const double h_2 = h / 2.0 * zoom_level;
+    makeCurrent();
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
