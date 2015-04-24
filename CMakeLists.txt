@@ -4,7 +4,7 @@ project(control_panel_plugins)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS control_panel roscpp std_msgs std_srvs joy_to_twist sensor_msgs)
+find_package(catkin REQUIRED COMPONENTS control_panel roscpp std_msgs std_srvs joy_to_twist sensor_msgs nav_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui)
@@ -53,7 +53,7 @@ include(${QT_USE_FILE})
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES cpfloat cpkeydrive
-#  CATKIN_DEPENDS control_panel roscpp std_msgs std_srvs joy_to_twist
+#  CATKIN_DEPENDS control_panel roscpp std_msgs std_srvs joy_to_twist sensor_msgs nav_msgs
 #  DEPENDS Qt4
 )
 
