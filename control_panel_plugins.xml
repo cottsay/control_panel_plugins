@@ -75,4 +75,11 @@
     </description>
   </class>
 </library>
+<library path="lib/libcpheading">
+  <class type="control_panel::CPHeadingPlugin" base_class_type="control_panel::ControlPanelPlugin">
+    <description>
+      Heading#sensor_msgs/Imu#Simple display widget for IMU heading
+    </description>
+  </class>
+</library>
 
